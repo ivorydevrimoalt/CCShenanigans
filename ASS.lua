@@ -43,10 +43,10 @@ local image_rows = {
     "     |  ^ ^   |      Elliot's ass                  ",
     "      \\__u___/        ascii all by                ",
     "        |  |               ivorydevrimo           ",
-    "      _O_|__ \\ O_____      ivorydevrimoqr         ",
+    "     _O_|__ \\ O_____      ivorydevrimoqr         ",
     "    /       \\ /      \\     ivorydevrimo3         ",
-    "    |        |         |                          ",
-    "     \\______/ \\_______/                           "
+    "    |        |       |                          ",
+    "     \\______/ \\______/                           "
 }
 
 ---
