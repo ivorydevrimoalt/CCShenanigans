@@ -7,7 +7,7 @@ math.randomseed(os.time())
 -- Function to find and initialize monitors
 local function initializeMonitors()
     local monitors = {}
-    print("Searching for connected monitors...")
+    print("Searching for connected peripherals...")
     -- Iterate through all connected peripherals
     for _, peripheralName in ipairs(peripheral.getNames()) do
         if peripheral.getType(peripheralName) == "monitor" then
@@ -20,41 +20,42 @@ local function initializeMonitors()
     end
 
     if #monitors == 0 then
-        print("No monitors found. Please ensure monitors are placed and connected.")
-        return nil
+        print("No external monitors found. Displaying noise on this computer's screen.")
+        -- If no external monitors, use the main terminal (computer screen) as the display target
+        return {term}
     else
         return monitors
     end
 end
 
 -- Main function to display noise on monitors
-local function displayNoise(monitors)
-    if not monitors then return end
+local function displayNoise(displayTargets)
+    if not displayTargets then return end
 
     -- Loop indefinitely to keep the noise effect running
     while true do
-        for _, monitor in ipairs(monitors) do
-            -- Get monitor dimensions
-            local width, height = monitor.getSize()
+        for _, target in ipairs(displayTargets) do
+            -- Get target dimensions (can be monitor or term)
+            local width, height = target.getSize()
 
-            -- Clear the monitor before drawing new noise
-            monitor.clear()
+            -- Clear the target before drawing new noise
+            target.clear()
 
             -- Generate and display random black/white "pixels" using background colors
             for y = 1, height do
                 for x = 1, width do
                     -- Move cursor to the current position
-                    monitor.setCursorPos(x, y)
+                    target.setCursorPos(x, y)
                     -- Set text color to black (ensures no white character pixels interfere)
-                    monitor.setTextColour(colors.black)
+                    target.setTextColour(colors.black)
                     -- Randomly choose between black or white background for the current "pixel"
                     if math.random(0, 1) == 0 then
-                        monitor.setBackgroundColour(colors.black)
+                        target.setBackgroundColour(colors.black)
                     else
-                        monitor.setBackgroundColour(colors.white)
+                        target.setBackgroundColour(colors.white)
                     end
                     -- Print a space character; its background will be the chosen color
-                    monitor.write(" ")
+                    target.write(" ")
                 end
             end
         end
@@ -64,16 +65,18 @@ local function displayNoise(monitors)
 end
 
 -- Main program execution
-local connectedMonitors = initializeMonitors()
-if connectedMonitors then
-    -- Clear the main computer terminal after initial messages
-    term.clear()
-    term.setCursorPos(1, 1)
-    print("Noise display active on monitors. Press Ctrl+T to terminate.")
-    displayNoise(connectedMonitors)
+local displayTargets = initializeMonitors()
+
+-- Clear the main computer terminal after initial messages
+term.clear()
+term.setCursorPos(1, 1)
+
+-- Provide a message indicating where the noise is being displayed
+if #displayTargets > 0 and displayTargets[1] == term then
+    print("Noise display active on this computer's screen. Press Ctrl+T to terminate.")
 else
-    -- If no monitors are found, clear the screen and display an exit message
-    term.clear()
-    term.setCursorPos(1, 1)
-    print("Exiting. No monitors to display on.")
+    print("Noise display active on external monitors. Press Ctrl+T to terminate.")
 end
+
+-- Start displaying noise on the determined targets
+displayNoise(displayTargets)
