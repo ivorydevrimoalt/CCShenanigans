@@ -28,35 +28,28 @@ end
 local function displayNoise(monitors)
     if not monitors then return end
 
-    -- Set text and background colors for black and white
-    local textColor = colors.white
-    local bgColor = colors.black
-
     -- Loop indefinitely to keep the noise effect running
     while true do
         for _, monitor in ipairs(monitors) do
             -- Get monitor dimensions
             local width, height = monitor.getSize()
 
-            -- Set the colors for the current monitor
-            monitor.setTextColour(textColor)
-            monitor.setBackgroundColour(bgColor)
-
             -- Clear the monitor before drawing new noise
             monitor.clear()
 
-            -- Generate and display random black/white characters
+            -- Generate and display random black/white "pixels" using background colors
             for y = 1, height do
                 for x = 1, width do
                     -- Move cursor to the current position
                     monitor.setCursorPos(x, y)
-                    -- Randomly choose between a black block (space with black background)
-                    -- or a white block (full block character with white text)
+                    -- Randomly choose between black or white background for the current "pixel"
                     if math.random(0, 1) == 0 then
-                        monitor.write(" ") -- Space with black background
+                        monitor.setBackgroundColour(colors.black)
                     else
-                        monitor.write("█") -- Full block character with white text
+                        monitor.setBackgroundColour(colors.white)
                     end
+                    -- Print a space character; its background will be the chosen color
+                    monitor.write(" ")
                 end
             end
         end
