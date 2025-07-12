@@ -91,26 +91,27 @@ local function moveToRelativeXY(target_x, target_y)
                 turtle.turnLeft()
             end
             current_dir = target_dir
+            sleep(0) -- Yield
         end
     end
 
     -- Move X
     if target_x > current_x then
         turnTo(1) -- East
-        for i = 1, target_x - current_x do turtle.forward() end
+        for i = 1, target_x - current_x do turtle.forward(); sleep(0) end
     elseif target_x < current_x then
         turnTo(3) -- West
-        for i = 1, current_x - target_x do turtle.forward() end
+        for i = 1, current_x - target_x do turtle.forward(); sleep(0) end
     end
     current_x = target_x
 
     -- Move Y (Z in Minecraft)
     if target_y > current_y then
         turnTo(2) -- South
-        for i = 1, target_y - current_y do turtle.forward() end
+        for i = 1, target_y - current_y do turtle.forward(); sleep(0) end
     elseif target_y < current_y then
         turnTo(0) -- North
-        for i = 1, current_y - target_y do turtle.forward() end
+        for i = 1, current_y - target_y do turtle.forward(); sleep(0) end
     end
     current_y = target_y
 end
@@ -141,6 +142,7 @@ local function placeBlock(block_name)
         sleep(0.1) -- Give time for block to break
         success, message = turtle.placeDown()
     end
+    sleep(0) -- Yield
     return success
 end
 
@@ -150,14 +152,21 @@ local function buildMaze(maze, wall_type, path_type, floor_type, height)
     print("Building maze (" .. maze_width .. "x" .. maze_height_layout .. ") with height " .. height .. "...")
 
     -- Store initial turtle position to return later
-    local initial_x, initial_y, initial_z = turtle.getPos()
-    local initial_dir = turtle.getDirection()
+    local initial_x, initial_y, initial_z, initial_dir
+    if turtle then -- Defensive check for turtle API
+        initial_x, initial_y, initial_z = turtle.getPos()
+        initial_dir = turtle.getDirection()
+    else
+        print("Error: Turtle API not available inside buildMaze. Cannot get initial position.")
+        return -- Cannot proceed without turtle
+    end
 
     -- Ensure turtle is on the ground level
     while not turtle.down() do
         -- If it can't go down, it's on the lowest possible level or blocked
         break
     end
+    sleep(0) -- Yield
     print("Turtle moved to ground level.")
 
     -- Build floor first
@@ -170,7 +179,7 @@ local function buildMaze(maze, wall_type, path_type, floor_type, height)
             else -- Wall
                 placeBlock(wall_type) -- Floor under wall
             end
-            turtle.forward()
+            turtle.forward(); sleep(0)
         end
     end
 
@@ -178,7 +187,7 @@ local function buildMaze(maze, wall_type, path_type, floor_type, height)
     print("Building maze walls...")
     for h = 1, height do
         moveToRelativeXY(0, 0) -- Return to maze origin for each layer
-        turtle.up() -- Move up one level for the next layer of walls
+        turtle.up(); sleep(0) -- Move up one level for the next layer of walls
         sleep(0.1) -- Give time for turtle to move
 
         for y = 0, maze_height_layout - 1 do
@@ -189,7 +198,7 @@ local function buildMaze(maze, wall_type, path_type, floor_type, height)
                 else -- Path
                     placeBlock(path_type) -- Clear space or place air
                 end
-                turtle.forward()
+                turtle.forward(); sleep(0)
             end
         end
     end
@@ -199,7 +208,7 @@ local function buildMaze(maze, wall_type, path_type, floor_type, height)
     -- Return turtle to initial position (relative to maze origin)
     moveToRelativeXY(0, 0)
     for i = 1, height do
-        turtle.down()
+        turtle.down(); sleep(0)
     end
     print("Turtle returned to maze origin.")
 end
@@ -312,13 +321,20 @@ local function solveAndHighlightPath(maze, path, solution_type)
     print("Highlighting solution path...")
 
     -- Store initial turtle position to return later
-    local initial_x, initial_y, initial_z = turtle.getPos()
-    local initial_dir = turtle.getDirection()
+    local initial_x, initial_y, initial_z, initial_dir
+    if turtle then -- Defensive check for turtle API
+        initial_x, initial_y, initial_z = turtle.getPos()
+        initial_dir = turtle.getDirection()
+    else
+        print("Error: Turtle API not available inside solveAndHighlightPath. Cannot get initial position.")
+        return -- Cannot proceed without turtle
+    end
 
     -- Ensure turtle is on the ground level
     while not turtle.down() do
         break
     end
+    sleep(0) -- Yield
 
     -- Move turtle to the start of the path and highlight
     for i, coords in ipairs(path) do
@@ -338,7 +354,7 @@ end
 
 -- Ensure turtle is available
 if not turtle then
-    print("Error: This script requires a turtle.")
+    print("Error: This script requires a turtle. Please run it on a turtle, not a regular computer.")
     return
 end
 
