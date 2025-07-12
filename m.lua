@@ -1,6 +1,8 @@
+
+-- Constants for tuning the effect
 local PI = math.pi
-local WAVE_SCALE_X = 0.05  -- Adjust for horizontal wave density
-local WAVE_SCALE_Y = 0.05  -- Adjust for vertical wave density
+local WAVE_SCALE_X = 0.015  -- Adjust for horizontal wave density (smaller for larger waves)
+local WAVE_SCALE_Y = 0.015  -- Adjust for vertical wave density (smaller for larger waves)
 local TIME_SCALE = 0.005   -- Adjust for animation speed
 local COLOR_INTENSITY = 127.5 -- Half of 255, for mapping sin/cos output to 0-255 range
 
@@ -12,17 +14,24 @@ local COLOR_INTENSITY = 127.5 -- Half of 255, for mapping sin/cos output to 0-25
 -- @return number The green component (0-255).
 -- @return number The blue component (0-255).
 function get_color(x, y, time)
-    -- Combine x, y, and time to create complex wave patterns
-    local val1 = x * WAVE_SCALE_X + math.sin(y * WAVE_SCALE_Y + time * TIME_SCALE)
-    local val2 = y * WAVE_SCALE_Y + math.cos(x * WAVE_SCALE_X - time * TIME_SCALE)
+    -- Create two primary wave patterns using sine and cosine,
+    -- influenced by both x, y, and time for dynamic movement.
+    local wave_x = x * WAVE_SCALE_X
+    local wave_y = y * WAVE_SCALE_Y
+    local time_offset = time * TIME_SCALE
 
-    -- Use sine and cosine with different phases and frequencies for RGB channels
-    -- Map the sine/cosine output (-1 to 1) to the 0-255 color range
-    local r = math.floor(math.sin(val1 * 1.0 + time * TIME_SCALE * 0.5) * COLOR_INTENSITY + COLOR_INTENSITY)
-    local g = math.floor(math.sin(val2 * 1.2 + time * TIME_SCALE * 0.7 + PI * 2/3) * COLOR_INTENSITY + COLOR_INTENSITY)
-    local b = math.floor(math.sin(val1 * 1.4 + time * TIME_SCALE * 0.9 + PI * 4/3) * COLOR_INTENSITY + COLOR_INTENSITY)
+    -- Calculate a base value that combines x, y, and time in a non-linear way
+    -- This forms the fundamental "shape" of the color transitions
+    local base_val = math.sin(wave_x + time_offset) + math.cos(wave_y - time_offset)
 
-    -- Ensure values are within 0-255 range
+    -- Generate Red, Green, and Blue components using sine waves
+    -- Each channel has a different frequency and phase offset to create a full spectrum.
+    -- The base_val modulates these sine waves, ensuring they are interconnected.
+    local r = math.floor(math.sin(base_val * 1.5 + time_offset * 0.5) * COLOR_INTENSITY + COLOR_INTENSITY)
+    local g = math.floor(math.sin(base_val * 1.8 + time_offset * 0.7 + PI * 2/3) * COLOR_INTENSITY + COLOR_INTENSITY)
+    local b = math.floor(math.sin(base_val * 2.1 + time_offset * 0.9 + PI * 4/3) * COLOR_INTENSITY + COLOR_INTENSITY)
+
+    -- Ensure values are within the valid 0-255 range for color components
     r = math.max(0, math.min(255, r))
     g = math.max(0, math.min(255, g))
     b = math.max(0, math.min(255, b))
