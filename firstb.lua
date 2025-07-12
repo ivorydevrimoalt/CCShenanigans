@@ -2,7 +2,7 @@
 local DELAY = 0.05 -- Smaller values make it faster, larger values make it slower
 
 term.clear()
-term.setTextScale(1)
+-- term.setTextScale(1) -- Removed this line to fix the error
 
 local width, height = term.getSize()
 
