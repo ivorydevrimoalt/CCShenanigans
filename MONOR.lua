@@ -54,7 +54,7 @@ local function displayNoise(monitors)
             end
         end
         -- Add a small delay to make the noise visible and prevent excessive CPU usage
-        sleep(0.05) -- Adjust this value for faster/slower noise
+        sleep(0.005) -- Adjust this value for faster/slower noise
     end
 end
 
