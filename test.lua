@@ -34,7 +34,7 @@ while true do
         term.write(sideChars[sideIndex])
       elseif y == centerY and x >= centerX and x <= centerX + 3 then
         -- Center "TSET" text
-        local char = "TSET":sub(x - centerX + 1, x - centerX + 1)
+        local char = string.sub("TSET", x - centerX + 1, x - centerX + 1)
         term.setTextColor(colors.white)
         term.setBackgroundColor(colors.black)
         term.write(char)
