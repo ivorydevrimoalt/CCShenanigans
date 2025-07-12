@@ -1,3 +1,26 @@
+-- ComputerCraft Lua Script: URL Fetcher for Binary Data (e.g., Images)
+--
+-- This script demonstrates how to fetch data from a given URL using ComputerCraft's
+-- 'http' API. It is designed to run on a standard or pocket computer without
+-- requiring an external monitor.
+--
+-- IMPORTANT LIMITATIONS:
+-- 1. Image Rendering: ComputerCraft's built-in displays (on computers/pocket PCs)
+--    are primarily text-based or very low-resolution pixel grids with limited
+--    color support. Directly decoding and displaying complex image formats like
+--    JPG, PNG, or GIF with their full color palettes and resolution is NOT
+--    feasible within the ComputerCraft Lua environment. This script will fetch
+--    the raw binary data, but it cannot interpret or render it as a visual image.
+-- 2. Content Warning: The URL provided by the user may contain mature or explicit
+--    content. Please be mindful of this before running the script or sharing it.
+--
+-- Usage:
+-- 1. Save this script on your ComputerCraft computer (e.g., as 'fetchimage').
+-- 2. Run it by typing 'fetchimage' in the computer's console.
+-- 3. Ensure HTTP requests are enabled in your ComputerCraft configuration.
+
+-- Define the URL to fetch data from.
+-- This URL points to a JPG image, which will be fetched as raw binary data.
 local targetUrl = "https://wimg.rule34.xxx//samples/3120/sample_5bf5c373c2219bd18d246813cec47828.jpg?13989521"
 
 -- --- START OF SCRIPT EXECUTION ---
@@ -24,7 +47,7 @@ end
 -- 2. 'err': An error message string if the request failed.
 local response, err = http.get(targetUrl)
 
--- Check if the request was successful.
+-- Check if the request was successful and has headers.
 if response then
     -- Read all content from the response.
     -- For binary files like images, this will be a long string of bytes.
@@ -32,8 +55,8 @@ if response then
     response.close() -- Always close the response object to release resources.
 
     -- Get Content-Type and Content-Length from response headers.
-    -- These headers provide metadata about the fetched content.
-    local contentType = response.headers["Content-Type"] or "unknown/binary"
+    -- Added a check for response.headers to prevent "attempt to index field 'headers' (a nil value)" error.
+    local contentType = (response.headers and response.headers["Content-Type"]) or "unknown/binary"
     local contentLength = #content -- Get the length of the fetched content in bytes.
 
     print("Fetch successful!")
