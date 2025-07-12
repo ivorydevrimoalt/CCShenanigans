@@ -29,24 +29,24 @@ term.setTextScale(1)
 -- Non-ASCII characters have been replaced with ASCII equivalents to prevent encoding issues.
 local image_rows = {
     "                                                  ",
-    "      XX    XX                                    ",
-    "     X  X  X  X                                   ",
+    "      __    __                                    ",
+    "     /  \  /  \                                   ",
     "   //         //    Sorry i repeat again~         ",
-    "        XXXXXX       my booty is not on           ",
-    "        X    X                 the menu~          ",
-    "          XXXX                   hehe~~           ",
+    "        /----\       my booty is not on           ",
+    "         L__rJ                 the menu~          ",
+    "                                 hehe~~           ",
     "                                                  ",
     "--------------------------------------------------",
     "        ____                                      ",
     "      |Roblox|                                    ",
     "      /______\\                                   ",
-    "      | ^ ^  |      Elliot's ass                  ",
+    "     |  ^ ^   |      Elliot's ass                  ",
     "      \\__u___/        ascii all by                ",
     "        |  |               ivorydevrimo           ",
-    "      ___|__ \\ ______      ivorydevrimoqr         ",
-    "    /  o    \\ /    o \\     ivorydevrimo3         ",
-    "   |         |         |                          ",
-    "    \\______/ \\_______/                           "
+    "      _O_|__ \\ O_____      ivorydevrimoqr         ",
+    "    /       \\ /      \\     ivorydevrimo3         ",
+    "    |        |         |                          ",
+    "     \\______/ \\_______/                           "
 }
 
 ---
@@ -58,6 +58,7 @@ for y = 1, #image_rows do
     local current_row_data = image_rows[y]
     term.setCursorPos(1, y) -- Set cursor to the beginning of the current line
     term.write(current_row_data) -- Print the entire row as text
+    print(current_row_data)
 end
 
 ---
@@ -67,5 +68,3 @@ end
 -- Reset cursor after drawing
 term.setCursorPos(1, 1)
 -- No background color reset needed as we're not setting them.
-
-print(image_rows) -- Added a newline for better spacing
