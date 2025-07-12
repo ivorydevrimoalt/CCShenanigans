@@ -154,16 +154,25 @@ local function render(target, targetWidth, targetHeight)
                 side = 1 -- Y-side wall hit
             end
 
-            -- Check if the current map square is a wall
-            -- Ensure mapX and mapY are within maze bounds
-            if mapY >= 1 and mapY <= #maze and mapX >= 1 and mapX <= #maze[1] then
+            -- Store original mapX, mapY for boundary check
+            local originalMapX = mapX
+            local originalMapY = mapY
+
+            -- Clamp mapX and mapY to ensure they are within valid maze dimensions
+            -- This prevents out-of-bounds access to the maze table.
+            mapX = math.max(1, math.min(#maze[1], mapX))
+            mapY = math.max(1, math.min(#maze, mapY))
+
+            -- If the ray went out of the defined maze boundaries (originalMapX/Y are out of range),
+            -- treat it as hitting an invisible wall at the edge of the world.
+            if originalMapY < 1 or originalMapY > #maze or originalMapX < 1 or originalMapX > #maze[1] then
+                hit = true
+                perpWallDist = 1e30 -- Set a very large distance
+            else
+                -- Now mapY and mapX are guaranteed to be within valid bounds [1, #maze] and [1, #maze[1]]
                 if maze[mapY][mapX] == 1 then
                     hit = true
                 end
-            else
-                -- Ray went out of maze bounds, treat as hit to avoid infinite loop
-                hit = true
-                perpWallDist = 1e30 -- Set a very large distance
             end
         end
 
@@ -232,14 +241,20 @@ while running do
             local newPlayerX = playerX + playerDirX * moveSpeed
             local newPlayerY = playerY + playerDirY * moveSpeed
             -- Check for collision with walls before moving
-            if maze[math.floor(newPlayerY)][math.floor(newPlayerX)] == 0 then
+            -- Clamp newPlayerY and newPlayerX to valid maze indices for collision check
+            local checkY = math.max(1, math.min(#maze, math.floor(newPlayerY)))
+            local checkX = math.max(1, math.min(#maze[1], math.floor(newPlayerX)))
+            if maze[checkY][checkX] == 0 then
                 playerX = newPlayerX
                 playerY = newPlayerY
             end
         elseif key == keys.s then -- Move backward
             local newPlayerX = playerX - playerDirX * moveSpeed
             local newPlayerY = playerY - playerDirY * moveSpeed
-            if maze[math.floor(newPlayerY)][math.floor(newPlayerX)] == 0 then
+            -- Clamp newPlayerY and newPlayerX to valid maze indices for collision check
+            local checkY = math.max(1, math.min(#maze, math.floor(newPlayerY)))
+            local checkX = math.max(1, math.min(#maze[1], math.floor(newPlayerX)))
+            if maze[checkY][checkX] == 0 then
                 playerX = newPlayerX
                 playerY = newPlayerY
             end
