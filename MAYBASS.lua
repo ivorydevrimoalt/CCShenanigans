@@ -30,10 +30,10 @@ term.setTextScale(1)
 local image_rows = {
     "                                                  ",
     "      __    __                                    ",
-    "     /  \  /  \                                   ",
+    "     /  \\  /  \\                                   ",
     "   //         //    Sorry i repeat again~         ",
-    "        /----\       my booty is not on           ",
-    "         L__rJ                 the menu~          ",
+    "        /----\\       my booty is not on           ",
+    "         L__r|                 the menu~          ",
     "                                 hehe~~           ",
     "                                                  ",
     "--------------------------------------------------",
