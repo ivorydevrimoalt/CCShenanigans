@@ -1,6 +1,9 @@
 -- ComputerCraft Monitor Noise Script
 -- This script will find all connected monitors and display a random black and white noise pattern on them.
 
+-- Seed the random number generator for truly random patterns each time the script runs
+math.randomseed(os.time())
+
 -- Function to find and initialize monitors
 local function initializeMonitors()
     local monitors = {}
@@ -42,6 +45,8 @@ local function displayNoise(monitors)
                 for x = 1, width do
                     -- Move cursor to the current position
                     monitor.setCursorPos(x, y)
+                    -- Set text color to black (ensures no white character pixels interfere)
+                    monitor.setTextColour(colors.black)
                     -- Randomly choose between black or white background for the current "pixel"
                     if math.random(0, 1) == 0 then
                         monitor.setBackgroundColour(colors.black)
@@ -54,15 +59,21 @@ local function displayNoise(monitors)
             end
         end
         -- Add a small delay to make the noise visible and prevent excessive CPU usage
-        sleep(0.5) -- Adjust this value for faster/slower noise
+        sleep(0.05) -- Adjust this value for faster/slower noise
     end
 end
 
 -- Main program execution
 local connectedMonitors = initializeMonitors()
 if connectedMonitors then
-    print("Starting noise display. Press Ctrl+T to terminate the script.")
+    -- Clear the main computer terminal after initial messages
+    term.clear()
+    term.setCursorPos(1, 1)
+    print("Noise display active on monitors. Press Ctrl+T to terminate.")
     displayNoise(connectedMonitors)
 else
+    -- If no monitors are found, clear the screen and display an exit message
+    term.clear()
+    term.setCursorPos(1, 1)
     print("Exiting. No monitors to display on.")
 end
