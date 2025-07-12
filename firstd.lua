@@ -1,11 +1,17 @@
 -- Configuration
 local DELAY = 0.05 -- Smaller values make it faster, larger values make it slower
-local ROTATION_SPEED = 5 -- Degrees per frame for rotation
+local ROTATION_SPEED = 5 -- Degrees per frame for background rotation
 local ZOOM_SPEED = 0.01 -- How fast the zoom changes
 local MIN_ZOOM = 0.5    -- Minimum text scale
 local MAX_ZOOM = 2.0    -- Maximum text scale
-local TEXT_CHARACTERS = {"R", "A", "S", "4"} -- Characters to paste
+local TEXT_CHARACTERS = {"R", "A", "S", "4"} -- Random characters to paste
 local TEXT_COUNT = 5 -- How many random characters to paste per frame
+
+-- Waving text configuration
+local WAVING_TEXT = "ivorydevrimo"
+local WAVE_AMPLITUDE = 3 -- How high/low the wave goes (in terminal rows)
+local WAVE_SPEED = 0.2 -- How fast the wave moves horizontally per character
+local WAVE_PHASE_SPEED = 0.1 -- How fast the entire wave animation progresses
 
 -- Initialize terminal
 term.clear()
@@ -16,8 +22,8 @@ local width, height = term.getSize()
 -- Check if setTextScale is available, otherwise default zoom to 1
 local supportsSetTextScale = type(term.setTextScale) == "function"
 if not supportsSetTextScale then
-    print("Warning: setTextScale not supported. Zoom effect will be disabled.")
-    sleep(2)
+    -- print("Warning: setTextScale not supported. Zoom effect will be disabled.")
+    -- sleep(2) -- Commented out to avoid pause if user wants clean run
 end
 
 -- Function to convert HSL to a ComputerCraft color
@@ -36,6 +42,7 @@ local hue = 0
 local currentRotation = 0 -- Current rotation angle in degrees
 local currentZoom = 1.0   -- Current text scale for zoom
 local zoomDirection = 1   -- 1 for zooming in, -1 for zooming out
+local wavePhase = 0       -- Current phase for the waving text
 
 -- Main animation loop
 while true do
@@ -78,9 +85,6 @@ while true do
             local rotatedX = translatedX * cosRot - translatedY * sinRot
             local rotatedY = translatedX * sinRot + translatedY * cosRot
 
-            -- Map back to the original screen dimensions (simplified, might stretch)
-            -- For a proper zoom and rotate, you'd apply zoom before rotation for texture mapping
-            -- but for simple color fill, we'll use rotated coords for hue
             local originalX = rotatedX + centerX
             local originalY = rotatedY + centerY
 
@@ -105,10 +109,34 @@ while true do
         local randChar = TEXT_CHARACTERS[math.random(1, #TEXT_CHARACTERS)]
 
         -- Set a contrasting text color (e.g., white or black)
-        term.setTextColor(colors.white) -- Or colors.black for dark backgrounds
+        term.setTextColor(colors.white)
         term.setCursorPos(randX, randY)
         term.write(randChar)
     end
+
+    -- Draw the waving "ivorydevrimo" text
+    local textLength = #WAVING_TEXT
+    local startX = math.floor(width / 2 - textLength / 2) -- Center the text horizontally
+    local baseY = math.floor(height / 2) -- Base vertical center
+
+    term.setTextColor(colors.black) -- Set text color for the waving text
+
+    for i = 1, textLength do
+        local char = string.sub(WAVING_TEXT, i, i)
+        -- Calculate vertical offset using sine wave
+        local yOffset = math.sin(wavePhase + (i * WAVE_SPEED)) * WAVE_AMPLITUDE
+        local drawY = math.floor(baseY + yOffset)
+
+        -- Ensure drawing within screen bounds
+        if drawY < 1 then drawY = 1 end
+        if drawY > height then drawY = height end
+
+        term.setCursorPos(startX + i - 1, drawY)
+        term.write(char)
+    end
+
+    -- Update waving text phase
+    wavePhase = wavePhase + WAVE_PHASE_SPEED
 
     -- Increment hue for the next frame, wrapping around at 360
     hue = (hue + 10) % 360
