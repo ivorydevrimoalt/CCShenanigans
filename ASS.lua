@@ -9,7 +9,6 @@
 -- it will default to the current computer's terminal.
 -- You can change "right" to the side your monitor is actually on if you have one.
 local term = peripheral.wrap("right")
-local terma = peripheral.wrap("left")
 if not term then term = peripheral.wrap("left") end
 if not term then term = peripheral.wrap("top") end
 if not term then term = peripheral.wrap("bottom") end
@@ -20,8 +19,6 @@ if not term then term = term.current() end -- Fallback to current terminal
 -- Clear the terminal and set text scale to 1 for pixel-perfect drawing (still relevant for character size)
 term.clear()
 term.setTextScale(1)
-terma.clear()
-terma.setTextScale(1)
 
 ---
 --- Image Data
@@ -61,8 +58,6 @@ for y = 1, #image_rows do
     local current_row_data = image_rows[y]
     term.setCursorPos(1, y) -- Set cursor to the beginning of the current line
     term.write(current_row_data) -- Print the entire row as text
-    terma.setCursorPos(1, y) -- Set cursor to the beginning of the current line
-    terma.write(current_row_data) -- Print the entire row as text
     print(current_row_data)
 end
 
