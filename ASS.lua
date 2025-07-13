@@ -67,5 +67,4 @@ end
 
 -- Reset cursor after drawing
 term.setCursorPos(1, 1)
-terma.setCursorPos(1, 1)
 -- No background color reset needed as we're not setting them.
