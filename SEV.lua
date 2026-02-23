@@ -13,16 +13,17 @@ end
 
 monitor.setTextScale(0.5)
 monitor.setBackgroundColor(colors.black)
+monitor.setTextColor(colors.white)
 monitor.clear()
 
 local w, h = monitor.getSize()
 
--- Center of the monitor
+-- Screen center
 local cx = math.floor(w / 2)
 local cy = math.floor(h / 2)
 
--- Cube size
-local size = 3
+-- 🔥 BIGGER cube
+local size = 7
 
 -- Cube vertices
 local vertices = {
@@ -56,8 +57,9 @@ local function rotateY(v, a)
     }
 end
 
+-- Projection
 local function project(v)
-    local z = v[3] + 5
+    local z = v[3] + 6
     return {
         math.floor(cx + (v[1] * size) / z),
         math.floor(cy + (v[2] * size) / z)
@@ -72,7 +74,7 @@ while true do
     local projected = {}
 
     for i, v in ipairs(vertices) do
-        local r = rotateY(rotateX(v, angle), angle * 0.7)
+        local r = rotateY(rotateX(v, angle), angle * 0.6)
         projected[i] = project(r)
     end
 
@@ -88,7 +90,7 @@ while true do
             local x = math.floor(a[1] + dx * i / steps)
             local y = math.floor(a[2] + dy * i / steps)
 
-            -- Keep drawing inside a 7x6 center area
+            -- Keep inside center 7x6 area
             if math.abs(x - cx) <= 3 and math.abs(y - cy) <= 2 then
                 monitor.setCursorPos(x, y)
                 monitor.write("7")
@@ -96,6 +98,6 @@ while true do
         end
     end
 
-    angle = angle + 0.1
+    angle = angle + 0.08
     sleep(0.05)
 end
