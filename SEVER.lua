@@ -12,14 +12,13 @@ if not monitor then error("No monitor found") end
 monitor.setTextScale(1)  -- << THIS FIXES THE DARK TINY LOOK
 monitor.setBackgroundColor(colors.black)
 monitor.setTextColor(colors.white)
-monitor.clear()
 
 local w, h = monitor.getSize()
 local cx = math.floor(w / 2)
 local cy = math.floor(h / 2)
 
 -- Cube size (big)
-local size = 10
+local size = 16
 
 -- Cube vertices
 local verts = {
