@@ -24,7 +24,6 @@ local rainbow = {
     colors.magenta, colors.pink
 }
 
--- render 777 chaos
 local function render(color, scale)
     for _, screen in pairs(screens) do
         local t = screen.obj
@@ -45,7 +44,6 @@ local function render(color, scale)
     end
 end
 
--- send virus packet
 local function sendVirus()
     modem.transmit(CHANNEL, CHANNEL, {
         virus = true,
@@ -54,20 +52,28 @@ local function sendVirus()
     })
 end
 
+-- main loop
 while true do
-    -- flash locally
-    local packet = {
-        color = rainbow[math.random(#rainbow)],
-        scale = math.random(1, 5)
-    }
-    render(packet.color, packet.scale)
+    -- local chaos
+    render(
+        rainbow[math.random(#rainbow)],
+        math.random(1, 5)
+    )
 
-    -- infect others
     sendVirus()
 
-    -- listen for incoming virus
-    local event, side, ch, rch, data = os.pullEventTimeout("modem_message", 0.15)
-    if event and ch == CHANNEL and type(data) == "table" and data.virus then
-        render(data.color, data.scale)
+    local timer = os.startTimer(0.15)
+
+    while true do
+        local event, a, b, c, d = os.pullEvent()
+
+        if event == "modem_message" then
+            local side, ch, rch, data = a, b, c, d
+            if ch == CHANNEL and type(data) == "table" and data.virus then
+                render(data.color, data.scale)
+            end
+        elseif event == "timer" and a == timer then
+            break
+        end
     end
 end
