@@ -1,21 +1,19 @@
--- SEVEN CHAOS MODE 😈
 math.randomseed(os.clock())
 
--- collect all screens (computer + monitors)
+-- collect all screens
 local screens = {}
 
--- computer terminal
+-- add computer terminal
 table.insert(screens, {
     type = "computer",
     obj = term
 })
 
--- monitors
-for _, m in pairs({peripheral.find("monitor")}) do
-    m.setTextScale(1)
+-- add all monitors
+for _, mon in pairs({ peripheral.find("monitor") }) do
     table.insert(screens, {
         type = "monitor",
-        obj = m
+        obj = mon
     })
 end
 
@@ -30,17 +28,16 @@ while true do
     for _, screen in pairs(screens) do
         local t = screen.obj
 
-        -- random text scale for monitors
+        -- random monitor scaling
         if screen.type == "monitor" then
-            t.setTextScale(math.random(1, 5))
+            t.setTextScale(math.random(1, 2))
         end
 
         local w, h = t.getSize()
+
         t.setBackgroundColor(colors.black)
         t.clear()
-
-        local fg = colorsList[math.random(#colorsList)]
-        t.setTextColor(fg)
+        t.setTextColor(colorsList[math.random(#colorsList)])
 
         for y = 1, h do
             t.setCursorPos(1, y)
@@ -48,5 +45,5 @@ while true do
         end
     end
 
-    sleep(0.15)
+    sleep(0.1)
 end
