@@ -11,7 +11,7 @@ end
 
 -- Open a wide range of channels (safe max)
 modem.closeAll()
-for ch = 0, 65535 do
+for ch = 0, 7 do
     modem.open(ch)
 end
 
