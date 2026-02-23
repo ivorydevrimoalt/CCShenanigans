@@ -1,20 +1,17 @@
--- GLOBAL SEVEN STORM 🌈🔥
--- Reacts to ANY wireless signal on ANY channel
--- Spams random channels
--- Flashes 7s on ALL screens (monitors + terminal)
+-- GLOBAL SEVEN STORM 🌈
+-- Flashes 7s on all screens, synced wirelessly
+-- Works on any monitor size, no channel overflow
 
--- Find modem
+local CHANNEL = 777 -- shared chaos channel
+
+-- Find wireless modem
 local modem = peripheral.find("modem")
 if not modem then
     error("Wireless modem required!")
 end
+modem.open(CHANNEL)
 
--- Open a wide range of channels (safe max)
-for ch = 0, 65535 do
-    modem.open(ch)
-end
-
--- Collect monitors
+-- Collect all monitors
 local screens = {}
 for _, name in pairs(peripheral.getNames()) do
     if peripheral.getType(name) == "monitor" then
@@ -22,12 +19,12 @@ for _, name in pairs(peripheral.getNames()) do
     end
 end
 
--- Include terminal
+-- Include computer terminal
 table.insert(screens, term)
 
 math.randomseed(os.clock() * 100000)
 
-local colorsList = {
+local colorList = {
     colors.white, colors.orange, colors.magenta, colors.lightBlue,
     colors.yellow, colors.lime, colors.pink, colors.gray,
     colors.lightGray, colors.cyan, colors.purple, colors.blue,
@@ -35,10 +32,10 @@ local colorsList = {
 }
 
 local function randColor()
-    return colorsList[math.random(#colorsList)]
+    return colorList[math.random(#colorList)]
 end
 
-local function draw(screen)
+local function drawSevens(screen)
     if screen ~= term then
         screen.setTextScale(math.random(5, 20) / 10)
     end
@@ -56,23 +53,25 @@ end
 
 local function flashAll()
     for _, s in ipairs(screens) do
-        draw(s)
+        drawSevens(s)
     end
 end
 
--- Broadcast random noise everywhere
+-- Broadcast loop (syncs all computers)
 local function broadcaster()
     while true do
-        modem.transmit(math.random(0, 65535), math.random(0, 65535), "7")
-        os.sleep(0.2)
+        modem.transmit(CHANNEL, CHANNEL, "7")
+        os.sleep(0.25)
     end
 end
 
--- Listen to EVERYTHING
+-- Listener loop
 local function listener()
     while true do
-        os.pullEvent("modem_message")
-        flashAll()
+        local _, _, _, _, msg = os.pullEvent("modem_message")
+        if msg then
+            flashAll()
+        end
     end
 end
 
