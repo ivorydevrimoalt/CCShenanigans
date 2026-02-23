@@ -18,7 +18,7 @@ local cx = math.floor(w / 2)
 local cy = math.floor(h / 2)
 
 -- Cube size (big)
-local size = 37
+local size = 17
 
 -- Cube vertices
 local verts = {
@@ -40,7 +40,7 @@ local function rotY(v,a)
 end
 
 local function project(v)
-    local z = v[3] + 6
+    local z = v[3] + 3
     return {
         math.floor(cx + (v[1]*size)/z),
         math.floor(cy + (v[2]*size)/z)
