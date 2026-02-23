@@ -9,8 +9,8 @@ end
 if not monitor then error("No monitor found") end
 
 -- 🔥 IMPORTANT: BIGGER PIXELS
-monitor.setTextScale(1)  -- << THIS FIXES THE DARK TINY LOOK
-monitor.setBackgroundColor(colors.white)
+monitor.setTextScale(2)  -- << THIS FIXES THE DARK TINY LOOK
+monitor.setBackgroundColor(colors.black)
 monitor.setTextColor(colors.white)
 
 local w, h = monitor.getSize()
